@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import DishCard from "../components/DishCard";
+import { API_URL } from "../config";
 
 export default function CustomerDashboard() {
   const { user, logout, token } = useAuth();
@@ -24,7 +25,7 @@ export default function CustomerDashboard() {
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/menu");
+        const response = await axios.get(`${API_URL}/menu`);
         setMenuItems(response.data);
         setError(null);
       } catch (err) {
@@ -76,7 +77,7 @@ export default function CustomerDashboard() {
       const totalPrice = items.reduce((sum, it) => sum + it.price_at_time * it.quantity, 0);
 
       await axios.post(
-        "http://localhost:8000/api/orders",
+        `${API_URL}/orders`,
         { items, total_price: totalPrice },
         { headers: { Authorization: `Bearer ${token || localStorage.getItem("ristro_token")}` } }
       );

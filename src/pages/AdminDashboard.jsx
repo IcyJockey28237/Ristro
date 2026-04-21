@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import DishFormModal from "../components/DishFormModal";
+import { API_URL } from "../config";
 
 export default function AdminDashboard() {
   const { user, logout, token } = useAuth();
@@ -17,7 +18,7 @@ export default function AdminDashboard() {
 
   const fetchMenu = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/menu");
+      const response = await axios.get(`${API_URL}/menu`);
       setMenuItems(response.data);
     } catch (err) {
       console.error("Failed to fetch menu items", err);
@@ -48,7 +49,7 @@ export default function AdminDashboard() {
   const handleDelete = async (id) => {
     // If your browser blocked native popups previously, window.confirm silently fails.
     try {
-      await axios.delete(`http://localhost:8000/api/menu/${id}`, {
+      await axios.delete(`${API_URL}/menu/${id}`, {
         headers: { Authorization: `Bearer ${token || localStorage.getItem("ristro_token")}` }
       });
       setMenuItems(menuItems.filter(item => item.id !== id));
@@ -63,11 +64,11 @@ export default function AdminDashboard() {
       const headers = { Authorization: `Bearer ${token || localStorage.getItem("ristro_token")}` };
       if (editingDish) {
         // Update
-        const res = await axios.put(`http://localhost:8000/api/menu/${editingDish.id}`, payload, { headers });
+        const res = await axios.put(`${API_URL}/menu/${editingDish.id}`, payload, { headers });
         setMenuItems(menuItems.map(item => item.id === editingDish.id ? res.data : item));
       } else {
         // Create
-        const res = await axios.post("http://localhost:8000/api/menu", payload, { headers });
+        const res = await axios.post(`${API_URL}/menu`, payload, { headers });
         setMenuItems([...menuItems, res.data]);
       }
       setIsModalOpen(false);

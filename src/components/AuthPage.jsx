@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import authBg from "../assets/auth-bg.png";
 import axios from "axios";
-
-const API_URL = "http://localhost:8000/api";
+import { API_URL } from "../config";
 
 // ─── Icon Components ───────────────────────────────────────────
 const UserIcon = () => (
