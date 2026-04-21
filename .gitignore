@@ -73,3 +73,6 @@ ENV/
 .venv
 *.db
 sqlite.db
+
+# Backend environment
+backend/.env
