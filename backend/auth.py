@@ -5,7 +5,7 @@ Handles password hashing and JWT token creation/verification.
 
 import os
 from datetime import datetime, timedelta, timezone
-from jose import JWTError, jwt
+import jwt
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -47,5 +47,5 @@ def decode_access_token(token: str) -> dict | None:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
-    except JWTError:
+    except jwt.PyJWTError:
         return None
