@@ -23,13 +23,13 @@ def require_admin(token: str = Depends(oauth2_scheme), db: Session = Depends(get
     payload = decode_access_token(token)
     if not payload:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-    
+
     user_id = int(payload.get("sub"))
     db_user = db.query(User).filter(User.id == user_id).first()
-    
+
     if not db_user or db_user.role != "admin":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized as admin")
-    
+
     return db_user
 
 
@@ -156,10 +156,10 @@ def update_menu_item(item_id: int, item: MenuItemCreate, db: Session = Depends(g
     db_item = db.query(MenuItem).filter(MenuItem.id == item_id).first()
     if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
-    
+
     for key, value in item.dict().items():
         setattr(db_item, key, value)
-        
+
     db.commit()
     db.refresh(db_item)
     return db_item
@@ -169,7 +169,7 @@ def delete_menu_item(item_id: int, db: Session = Depends(get_db), admin: dict = 
     db_item = db.query(MenuItem).filter(MenuItem.id == item_id).first()
     if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
-    
+
     # Soft delete instead of hard delete to preserve order history
     db_item.available = 0
     db.commit()
@@ -183,9 +183,9 @@ def create_order(request: OrderCreate, db: Session = Depends(get_db), token: str
     payload = decode_access_token(token)
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid token")
-        
+
     user_id = int(payload.get("sub"))
-    
+
     new_order = Order(
         user_id=user_id,
         total_price=request.total_price,
@@ -194,7 +194,7 @@ def create_order(request: OrderCreate, db: Session = Depends(get_db), token: str
     db.add(new_order)
     db.commit()
     db.refresh(new_order)
-    
+
     for item in request.items:
         order_item = OrderItem(
             order_id=new_order.id,
@@ -203,7 +203,7 @@ def create_order(request: OrderCreate, db: Session = Depends(get_db), token: str
             price_at_time=item.price_at_time
         )
         db.add(order_item)
-    
+
     db.commit()
     return new_order
 
@@ -212,3 +212,5 @@ def create_order(request: OrderCreate, db: Session = Depends(get_db), token: str
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+
+
