@@ -141,7 +141,7 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
 @app.get("/api/menu", response_model=list[MenuItemResponse])
 def get_menu(db: Session = Depends(get_db)):
     """Fetch all available menu items."""
-    return db.query(MenuItem).filter(MenuItem.available == 1).all()
+    return db.query(MenuItem).filter(MenuItem.available == True).all()
 
 @app.post("/api/menu", response_model=MenuItemResponse, status_code=status.HTTP_201_CREATED)
 def create_menu_item(item: MenuItemCreate, db: Session = Depends(get_db), admin: dict = Depends(require_admin)):
