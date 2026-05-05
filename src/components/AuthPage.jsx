@@ -212,7 +212,6 @@ export default function AuthPage() {
           {/* ── Logo ── */}
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3">
-              <img src={coffee} alt="Ristro Logo" className="w-12 h-12 object-contain animate-float" />
               <h1
                 className="text-5xl font-extrabold shimmer-text tracking-tight"
                 style={{ fontFamily: "var(--font-outfit)" }}
