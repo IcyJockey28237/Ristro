@@ -2,7 +2,7 @@
 Ristro Backend — Database Models
 """
 
-from sqlalchemy import Column, Integer, String, DateTime, func, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, func, ForeignKey, Boolean
 from database import Base
 
 
@@ -28,7 +28,7 @@ class MenuItem(Base):
     price = Column(Integer, nullable=False)  # Stored in cents, or we can use Float. Let's use Float for simplicity.
     category = Column(String(50), nullable=False) 
     image_url = Column(String(255), nullable=True)
-    available = Column(Integer, nullable=False, default=1)  # Boolean alternative (1/0) or just boolean
+    available = Column(Boolean, nullable=False, default=True)
 
     def __repr__(self):
         return f"<MenuItem(id={self.id}, title='{self.title}', price={self.price})>"

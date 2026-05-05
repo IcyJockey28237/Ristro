@@ -53,13 +53,15 @@ app.add_middleware(
 )
 
 import logging
+from fastapi.responses import JSONResponse
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
     logger.error(f"Global error: {exc}", exc_info=True)
-    return HTTPException(status_code=500, detail=str(exc))
+    return JSONResponse(status_code=500, content={"detail": str(exc)})
 
 
 # ─── Health Check ────────────────────────────────────────────
@@ -145,7 +147,7 @@ def get_menu(db: Session = Depends(get_db)):
 
 @app.post("/api/menu", response_model=MenuItemResponse, status_code=status.HTTP_201_CREATED)
 def create_menu_item(item: MenuItemCreate, db: Session = Depends(get_db), admin: dict = Depends(require_admin)):
-    new_item = MenuItem(**item.dict())
+    new_item = MenuItem(**item.model_dump())
     db.add(new_item)
     db.commit()
     db.refresh(new_item)
@@ -157,7 +159,7 @@ def update_menu_item(item_id: int, item: MenuItemCreate, db: Session = Depends(g
     if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
 
-    for key, value in item.dict().items():
+    for key, value in item.model_dump().items():
         setattr(db_item, key, value)
 
     db.commit()
@@ -171,7 +173,7 @@ def delete_menu_item(item_id: int, db: Session = Depends(get_db), admin: dict = 
         raise HTTPException(status_code=404, detail="Item not found")
 
     # Soft delete instead of hard delete to preserve order history
-    db_item.available = 0
+    db_item.available = False
     db.commit()
     return None
 

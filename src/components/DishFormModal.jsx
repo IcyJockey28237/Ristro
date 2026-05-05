@@ -36,7 +36,7 @@ export default function DishFormModal({ isOpen, onClose, onSubmit, initialData =
     const payload = {
       ...formData,
       price: Math.round(parseFloat(formData.price) * 100), // convert dollars to cents
-      available: 1
+      available: true
     };
     onSubmit(payload);
   };

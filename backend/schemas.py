@@ -42,7 +42,7 @@ class MenuItemBase(BaseModel):
     price: int
     category: str
     image_url: str | None = None
-    available: int = 1
+    available: bool = True
 
 class MenuItemCreate(MenuItemBase):
     pass
