@@ -4,6 +4,7 @@ import AuthPage from "./components/AuthPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import coffee from "./assets/coffee.png";
 
 function AuthRedirect() {
   const { user, loading } = useAuth();
@@ -26,6 +27,12 @@ function AuthRedirect() {
 
 function App() {
   return (
+    <>
+    <div className="App">
+      <header className="App-header">
+        <img src={coffee} className="App-logo" alt="logo" />
+      </header>
+    </div>
     <AuthProvider>
       <Router>
         <Routes>
@@ -57,6 +64,7 @@ function App() {
         </Routes>
       </Router>
     </AuthProvider>
+    </>
   );
 }
 
