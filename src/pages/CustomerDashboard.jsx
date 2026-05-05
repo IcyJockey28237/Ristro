@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import DishCard from "../components/DishCard";
 import { API_URL } from "../config";
+import coffee from "../assets/coffee.png";
 
 export default function CustomerDashboard() {
   const { user, logout, token } = useAuth();
@@ -117,9 +118,12 @@ export default function CustomerDashboard() {
       {/* Sticky Header */}
       <header className="sticky top-0 z-50 bg-black/60 backdrop-blur-xl border-b border-ristro-card-border/50 px-6 py-4 flex flex-wrap items-center justify-between gap-4 transition-all">
         <div className="flex items-center gap-4">
-          <h1 className="text-3xl font-bold text-ristro-gold tracking-tight" style={{ fontFamily: "var(--font-outfit)" }}>
-            Ristro
-          </h1>
+          <div className="flex items-center gap-2">
+            <img src={coffee} alt="Ristro Logo" className="w-8 h-8 object-contain" />
+            <h1 className="text-3xl font-bold text-ristro-gold tracking-tight" style={{ fontFamily: "var(--font-outfit)" }}>
+              Ristro
+            </h1>
+          </div>
           <div className="hidden md:block h-6 w-px bg-white/10"></div>
           <p className="hidden md:block text-ristro-text-muted text-sm capitalize">
             Welcome back, {user?.name.split(" ")[0]}

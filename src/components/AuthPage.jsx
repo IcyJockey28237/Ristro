@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import authBg from "../assets/auth-bg.png";
+import coffee from "../assets/coffee.png";
 import axios from "axios";
 import { API_URL } from "../config";
 
@@ -210,12 +211,15 @@ export default function AuthPage() {
         <div className="glass-card p-8 sm:p-10 animate-pulse-glow">
           {/* ── Logo ── */}
           <div className="text-center mb-8">
-            <h1
-              className="text-5xl font-extrabold shimmer-text tracking-tight"
-              style={{ fontFamily: "var(--font-outfit)" }}
-            >
-              Ristro
-            </h1>
+            <div className="flex items-center justify-center gap-3">
+              <img src={coffee} alt="Ristro Logo" className="w-12 h-12 object-contain animate-float" />
+              <h1
+                className="text-5xl font-extrabold shimmer-text tracking-tight"
+                style={{ fontFamily: "var(--font-outfit)" }}
+              >
+                Ristro
+              </h1>
+            </div>
             <p className="mt-2 text-ristro-text-muted text-sm tracking-widest uppercase">
               Restaurant & Café
             </p>
