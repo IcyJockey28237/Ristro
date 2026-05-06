@@ -48,14 +48,15 @@ origins = [
     "http://localhost:5173",
     "http://localhost:3000",
     "https://ristro-baie.vercel.app",
-    "https://ristro-restaurant.vercel.app", # Potential common names
+    "https://ristro-baie.vercel.app/",
+    "https://ristro-restaurant.vercel.app",
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -67,8 +68,19 @@ logger = logging.getLogger(__name__)
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
-    logger.error(f"Global error: {exc}", exc_info=True)
-    return JSONResponse(status_code=500, content={"detail": str(exc)})
+    logger.error(f"Global error on {request.method} {request.url}: {exc}", exc_info=True)
+    # Ensure CORS headers are added to the error response
+    response = JSONResponse(
+        status_code=500, 
+        content={"detail": "Internal Server Error", "message": str(exc)}
+    )
+    # We can't easily access the middleware-added headers here, 
+    # but the browser needs them to see the error detail
+    origin = request.headers.get("origin")
+    if origin in origins:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+    return response
 
 
 # ─── Health Check ────────────────────────────────────────────
