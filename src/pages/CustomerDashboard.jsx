@@ -274,7 +274,7 @@ export default function CustomerDashboard() {
                         <div className="flex-1">
                           <h4 className="font-semibold text-white text-sm">{item.title}</h4>
                           <p className="text-ristro-gold text-sm font-bold mt-1">
-                            {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(item.price / 100)}
+                            {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(item.price / 100)}
                           </p>
                         </div>
                         <div className="flex flex-col items-center gap-1 bg-black/40 rounded-lg p-1 border border-white/10">
@@ -295,7 +295,7 @@ export default function CustomerDashboard() {
                 <div className="flex justify-between items-center text-lg">
                   <span className="text-ristro-text-muted">Total</span>
                   <span className="font-bold text-ristro-gold text-2xl" style={{ fontFamily: "var(--font-outfit)" }}>
-                    {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(totalPriceInCents / 100)}
+                    {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(totalPriceInCents / 100)}
                   </span>
                 </div>
                 <button

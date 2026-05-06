@@ -1,9 +1,9 @@
 import React from "react";
 
 export default function DishCard({ item, cartCount, onAdd, onRemove }) {
-  const formattedPrice = new Intl.NumberFormat("en-US", {
+  const formattedPrice = new Intl.NumberFormat("en-IN", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
   }).format(item.price / 100);
 
   return (

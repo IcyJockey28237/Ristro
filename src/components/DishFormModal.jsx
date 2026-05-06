@@ -77,7 +77,7 @@ export default function DishFormModal({ isOpen, onClose, onSubmit, initialData =
 
           <div className="flex gap-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-white/80 mb-1">Price (USD)</label>
+              <label className="block text-sm font-medium text-white/80 mb-1">Price (INR)</label>
               <input 
                 required
                 type="number" 

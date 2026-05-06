@@ -171,7 +171,7 @@ export default function AdminDashboard() {
                         </span>
                       </td>
                       <td className="p-4 text-ristro-gold font-bold">
-                        {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(item.price / 100)}
+                        {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(item.price / 100)}
                       </td>
                       <td className="p-4 text-right space-x-3">
                         <button 
