@@ -51,10 +51,10 @@ CREATE INDEX idx_users_email ON users(email);
 -- Create index on menu category
 CREATE INDEX idx_menu_items_category ON menu_items(category);
 
--- Insert sample admin user (password: admin123)
+-- Insert sample admin user (password: admin@Ristro28237)
 -- IMPORTANT: Change this password in production!
 INSERT INTO users (name, email, hashed_password, role) VALUES
-('Admin', 'admin@ristro.com', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYzS3MebAJu', 'admin');
+('Admin', 'admin@ristro.com', '$2b$12$A2aRYJEPKS.sfcKdgwbtceP6ZyirTpbhjEEl9NI7CHH2KfvUZ87HC', 'admin');
 
 -- Insert sample menu items
 INSERT INTO menu_items (title, description, price, category, image_url, available) VALUES

@@ -110,7 +110,7 @@ npm run dev
 ## Default Credentials
 
 After running the schema, you can login with:
-- **Admin:** admin@ristro.com / admin123
+- **Admin:** credentials would be given if requested
 
 ---
 
