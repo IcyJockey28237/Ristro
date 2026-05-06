@@ -15,7 +15,7 @@ def seed_menu():
         User(
             name="Admin User",
             email="admin@ristro.com",
-            hashed_password=hash_password("admin123"),
+            hashed_password=hash_password("admin@Ristro28237"),
             role="admin"
         ),
         User(

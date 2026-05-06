@@ -44,9 +44,16 @@ app = FastAPI(
 )
 
 # ─── CORS Middleware (allow React frontend) ──────────────────
+origins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://ristro-baie.vercel.app",
+    "https://ristro-restaurant.vercel.app", # Potential common names
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Temporarily allow all for debugging
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
