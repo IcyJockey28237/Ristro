@@ -15,7 +15,8 @@ from database import engine, get_db, Base
 from models import User, MenuItem, Order, OrderItem
 from schemas import (
     SignupRequest, LoginRequest, TokenResponse, UserResponse,
-    MenuItemResponse, MenuItemCreate, OrderCreate, OrderResponse
+    MenuItemResponse, MenuItemCreate, OrderCreate, OrderResponse,
+    MenuAvailabilityUpdate, OrderStatusUpdate
 )
 from auth import hash_password, verify_password, create_access_token, decode_access_token
 
@@ -56,7 +57,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -161,8 +162,8 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
 # ─── MENU ────────────────────────────────────────────────────
 @app.get("/api/menu", response_model=list[MenuItemResponse])
 def get_menu(db: Session = Depends(get_db)):
-    """Fetch all available menu items."""
-    return db.query(MenuItem).filter(MenuItem.available == True).all()
+    """Fetch all menu items that are not deleted."""
+    return db.query(MenuItem).filter(MenuItem.is_deleted == False).all()
 
 @app.post("/api/menu", response_model=MenuItemResponse, status_code=status.HTTP_201_CREATED)
 def create_menu_item(item: MenuItemCreate, db: Session = Depends(get_db), admin: dict = Depends(require_admin)):
@@ -185,14 +186,25 @@ def update_menu_item(item_id: int, item: MenuItemCreate, db: Session = Depends(g
     db.refresh(db_item)
     return db_item
 
+@app.patch("/api/menu/{item_id}/availability", response_model=MenuItemResponse)
+def update_menu_item_availability(item_id: int, request: MenuAvailabilityUpdate, db: Session = Depends(get_db), admin: dict = Depends(require_admin)):
+    db_item = db.query(MenuItem).filter(MenuItem.id == item_id).first()
+    if not db_item:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    db_item.available = request.available
+    db.commit()
+    db.refresh(db_item)
+    return db_item
+
 @app.delete("/api/menu/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_menu_item(item_id: int, db: Session = Depends(get_db), admin: dict = Depends(require_admin)):
     db_item = db.query(MenuItem).filter(MenuItem.id == item_id).first()
     if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
 
-    # Soft delete instead of hard delete to preserve order history
-    db_item.available = False
+    # Soft delete
+    db_item.is_deleted = True
     db.commit()
     return None
 
@@ -210,7 +222,8 @@ def create_order(request: OrderCreate, db: Session = Depends(get_db), token: str
     new_order = Order(
         user_id=user_id,
         total_price=request.total_price,
-        status="pending"
+        status="pending",
+        table_number=request.table_number
     )
     db.add(new_order)
     db.commit()
@@ -227,6 +240,23 @@ def create_order(request: OrderCreate, db: Session = Depends(get_db), token: str
 
     db.commit()
     return new_order
+
+@app.get("/api/orders", response_model=list[OrderResponse])
+def get_orders(db: Session = Depends(get_db), admin: dict = Depends(require_admin)):
+    """Fetch all orders (Admin only)."""
+    return db.query(Order).order_by(Order.created_at.desc()).all()
+
+@app.patch("/api/orders/{order_id}/status", response_model=OrderResponse)
+def update_order_status(order_id: int, request: OrderStatusUpdate, db: Session = Depends(get_db), admin: dict = Depends(require_admin)):
+    """Update order status (Admin only)."""
+    db_order = db.query(Order).filter(Order.id == order_id).first()
+    if not db_order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    db_order.status = request.status
+    db.commit()
+    db.refresh(db_order)
+    return db_order
 
 
 # ─── Run with: uvicorn main:app --reload ────────────────────

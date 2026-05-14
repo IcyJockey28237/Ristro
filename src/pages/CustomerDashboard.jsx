@@ -20,6 +20,7 @@ export default function CustomerDashboard() {
   
   // Simple cart state: mapping item.id to quantity
   const [cart, setCart] = useState({});
+  const [tableNumber, setTableNumber] = useState("");
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
@@ -36,7 +37,12 @@ export default function CustomerDashboard() {
         setLoading(false);
       }
     };
+
     fetchMenu();
+
+    // Set up polling interval to keep menu synced (e.g., every 10 seconds)
+    const interval = setInterval(fetchMenu, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleLogout = () => {
@@ -45,6 +51,7 @@ export default function CustomerDashboard() {
   };
 
   const handleAdd = (item) => {
+    if (item.available === false) return;
     setCart((prev) => ({
       ...prev,
       [item.id]: (prev[item.id] || 0) + 1,
@@ -66,25 +73,36 @@ export default function CustomerDashboard() {
   const handleCheckout = async () => {
     setIsSubmitting(true);
     try {
+      // Final availability check before checkout
       const items = Object.entries(cart).map(([id, quantity]) => {
         const menuItem = menuItems.find((m) => m.id === parseInt(id));
+        if (!menuItem || menuItem.available === false) return null;
         return {
           menu_item_id: parseInt(id),
           quantity,
           price_at_time: menuItem.price,
         };
-      });
+      }).filter(Boolean);
+
+      if (items.length === 0) {
+        alert("Your cart is empty or items are no longer available.");
+        setIsSubmitting(false);
+        setIsCartOpen(false);
+        setCart({});
+        return;
+      }
 
       const totalPrice = items.reduce((sum, it) => sum + it.price_at_time * it.quantity, 0);
 
       await axios.post(
         `${API_URL}/orders`,
-        { items, total_price: totalPrice },
+        { items, total_price: totalPrice, table_number: tableNumber },
         { headers: { Authorization: `Bearer ${token || localStorage.getItem("ristro_token")}` } }
       );
 
       setOrderSuccess(true);
       setCart({});
+      setTableNumber("");
     } catch (err) {
       console.error(err);
       alert("Failed to place order. Please try again.");
@@ -292,7 +310,19 @@ export default function CustomerDashboard() {
             {/* Footer */}
             {!orderSuccess && totalItems > 0 && (
               <div className="p-6 border-t border-ristro-card-border bg-black/40 space-y-4">
-                <div className="flex justify-between items-center text-lg">
+                <div className="space-y-2">
+                  <label className="text-[10px] uppercase tracking-[0.2em] text-white/30 font-bold ml-1">
+                    Table Number
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 05"
+                    value={tableNumber}
+                    onChange={(e) => setTableNumber(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-ristro-gold transition-all"
+                  />
+                </div>
+                <div className="flex justify-between items-center text-lg pt-2">
                   <span className="text-ristro-text-muted">Total</span>
                   <span className="font-bold text-ristro-gold text-2xl" style={{ fontFamily: "var(--font-outfit)" }}>
                     {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(totalPriceInCents / 100)}

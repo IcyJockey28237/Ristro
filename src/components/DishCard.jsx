@@ -6,8 +6,10 @@ export default function DishCard({ item, cartCount, onAdd, onRemove }) {
     currency: "INR",
   }).format(item.price / 100);
 
+  const isAvailable = item.available !== false;
+
   return (
-    <div className="glass-card overflow-hidden hover:shadow-[0_8px_32px_rgba(212,168,78,0.15)] transition-all duration-300 group flex flex-col h-full border border-ristro-card-border/50">
+    <div className={`glass-card overflow-hidden hover:shadow-[0_8px_32px_rgba(212,168,78,0.15)] transition-all duration-300 group flex flex-col h-full border border-ristro-card-border/50 ${!isAvailable ? 'opacity-70 grayscale-[0.5]' : ''}`}>
       {/* Image Container */}
       <div className="relative h-56 w-full overflow-hidden bg-black/40">
         {item.image_url ? (
@@ -21,9 +23,20 @@ export default function DishCard({ item, cartCount, onAdd, onRemove }) {
             No Image
           </div>
         )}
+        
+        {/* Category Badge */}
         <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-md px-3 py-1 rounded-full text-ristro-gold text-xs font-semibold border border-ristro-gold/30 uppercase tracking-widest shadow-lg">
           {item.category}
         </div>
+
+        {/* Out of Stock Overlay */}
+        {!isAvailable && (
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center">
+            <span className="px-4 py-2 bg-red-500/80 text-white font-bold text-xs uppercase tracking-[0.2em] rounded-md border border-red-400 shadow-2xl">
+              Out of Stock
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -46,7 +59,14 @@ export default function DishCard({ item, cartCount, onAdd, onRemove }) {
 
         {/* Action Area */}
         <div className="mt-auto">
-          {cartCount > 0 ? (
+          {!isAvailable ? (
+            <button
+              disabled
+              className="w-full py-3 rounded-lg bg-white/5 text-white/20 font-bold uppercase tracking-wider text-xs border border-white/10 cursor-not-allowed"
+            >
+              Unavailable
+            </button>
+          ) : cartCount > 0 ? (
             <div className="flex items-center justify-between bg-ristro-input-bg border border-ristro-card-border rounded-lg p-1.5">
               <button
                 onClick={() => onRemove(item)}

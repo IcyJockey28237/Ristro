@@ -4,6 +4,7 @@ Request/response validation for the API.
 """
 
 from pydantic import BaseModel, EmailStr
+from datetime import datetime
 
 
 # ─── Auth Schemas ─────────────────────────────────────────────
@@ -49,9 +50,13 @@ class MenuItemCreate(MenuItemBase):
 
 class MenuItemResponse(MenuItemBase):
     id: int
+    is_deleted: bool
 
     class Config:
         from_attributes = True
+
+class MenuAvailabilityUpdate(BaseModel):
+    available: bool
 
 # ─── Order Schemas ────────────────────────────────────────────
 
@@ -60,15 +65,33 @@ class OrderItemCreate(BaseModel):
     quantity: int
     price_at_time: int
 
+class OrderItemResponse(BaseModel):
+    id: int
+    order_id: int
+    menu_item_id: int
+    quantity: int
+    price_at_time: int
+    menu_item: MenuItemResponse | None = None
+
+    class Config:
+        from_attributes = True
+
 class OrderCreate(BaseModel):
     items: list[OrderItemCreate]
     total_price: int
+    table_number: str | None = None
 
 class OrderResponse(BaseModel):
     id: int
     user_id: int
     total_price: int
     status: str
+    table_number: str | None = None
+    created_at: datetime
+    items: list[OrderItemResponse] = []
 
     class Config:
         from_attributes = True
+
+class OrderStatusUpdate(BaseModel):
+    status: str

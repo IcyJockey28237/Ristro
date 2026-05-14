@@ -3,6 +3,7 @@ Ristro Backend — Database Models
 """
 
 from sqlalchemy import Column, Integer, String, DateTime, func, ForeignKey, Boolean
+from sqlalchemy.orm import relationship
 from database import Base
 
 
@@ -29,6 +30,7 @@ class MenuItem(Base):
     category = Column(String(50), nullable=False) 
     image_url = Column(String(255), nullable=True)
     available = Column(Boolean, nullable=False, default=True)
+    is_deleted = Column(Boolean, nullable=False, default=False)
 
     def __repr__(self):
         return f"<MenuItem(id={self.id}, title='{self.title}', price={self.price})>"
@@ -40,7 +42,10 @@ class Order(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     total_price = Column(Integer, nullable=False)
     status = Column(String(50), nullable=False, default="pending")  # pending, completed, cancelled
+    table_number = Column(String(10), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    items = relationship("OrderItem", back_populates="order")
 
 class OrderItem(Base):
     __tablename__ = "order_items"
@@ -50,3 +55,6 @@ class OrderItem(Base):
     menu_item_id = Column(Integer, ForeignKey("menu_items.id"), nullable=False)
     quantity = Column(Integer, nullable=False)
     price_at_time = Column(Integer, nullable=False)
+
+    order = relationship("Order", back_populates="items")
+    menu_item = relationship("MenuItem")
