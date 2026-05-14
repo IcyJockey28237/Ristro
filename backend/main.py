@@ -258,6 +258,26 @@ def update_order_status(order_id: int, request: OrderStatusUpdate, db: Session =
     db.refresh(db_order)
     return db_order
 
+@app.delete("/api/orders/{order_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_order(order_id: int, db: Session = Depends(get_db), admin: dict = Depends(require_admin)):
+    """Delete a specific order (Admin only)."""
+    db_order = db.query(Order).filter(Order.id == order_id).first()
+    if not db_order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    db.delete(db_order)
+    db.commit()
+    return None
+
+@app.delete("/api/orders", status_code=status.HTTP_204_NO_CONTENT)
+def clear_all_orders(db: Session = Depends(get_db), admin: dict = Depends(require_admin)):
+    """Delete all orders and order items (Admin only)."""
+    # Delete all items first (though cascade handles it, explicit can be safer for bulk)
+    db.query(OrderItem).delete()
+    db.query(Order).delete()
+    db.commit()
+    return None
+
 
 # ─── Run with: uvicorn main:app --reload ────────────────────
 if __name__ == "__main__":
