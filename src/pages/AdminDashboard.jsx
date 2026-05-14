@@ -253,8 +253,8 @@ export default function AdminDashboard() {
               </button>
             </div>
 
-            <div className="glass-card overflow-hidden border border-ristro-card-border">
-              <div className="overflow-x-auto">
+            <div className="glass-card border border-ristro-card-border">
+              <div className="overflow-x-visible">
                 <table className="w-full text-left">
                   <thead>
                     <tr className="bg-white/5 text-ristro-text-muted text-xs uppercase tracking-wider">
@@ -356,7 +356,7 @@ export default function AdminDashboard() {
                   {orders
                     .filter(o => orderStatusFilter === "all" || o.status === orderStatusFilter)
                     .map(order => (
-                    <div key={order.id} className="glass-card border border-white/10 overflow-hidden flex flex-col md:flex-row">
+                    <div key={order.id} className="glass-card border border-white/10 flex flex-col md:flex-row">
                       <div className={`w-2 md:w-3 ${order.status === "pending" ? "bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.3)]" : order.status === "preparing" ? "bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]" : "bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.3)]"}`}></div>
                       <div className="flex-1 p-5 lg:p-6">
                         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
